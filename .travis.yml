@@ -1,0 +1,20 @@
+services:
+  - docker
+
+matrix:
+  fast_finish: true
+
+before_script:
+  - make build
+
+script:
+  - make test
+
+after_success:
+  - if [[ "${TRAVIS_TAG}" != "" ]]; then
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker tag udovicic/shopware udovicic/shopware:latest;
+    docker tag udovicic/shopware udovicic/shopware:${TRAVIS_TAG};
+    docker push udovicic/shopware:latest;
+    docker push udovicic/shopware:${TRAVIS_TAG};
+    fi
